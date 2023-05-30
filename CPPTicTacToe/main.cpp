@@ -14,10 +14,9 @@ class Player {
 public:
     string name;
     char symbol;
-    vector<int> tilesOwned;
-    Player(string pName, char pSymbol) {
-        name = pName;
-        symbol = pSymbol;
+    Player(string name, char symbol) {
+        this->name = name;
+        this->symbol = symbol;
     }
 };
 
@@ -97,18 +96,29 @@ public:
         return false;
     }
     
-    void executePlayerMove(int tile) {
-        int i = tile / 3;
-        int j = tile % 3;
+    bool executePlayerMove(int tile) {
+        if (tile < 1 || tile > 9) {
+            return false;
+        }
+        int offset = tile-1;
+        int i = offset / 3;
+        int j = offset % 3;
+        if (board[i][j] != '.') {
+            return false;
+        }
         board[i][j] = current->symbol;
+        return true;
     }
     
     bool executeTurn() {
-        cout << "It is now Player " << current->name << "'s turn." << endl;
-        string tile;
-        cin >> tile;
-        executePlayerMove(stoi(tile));
-        printBoard();
+        bool validMove = false;
+        do {
+            cout << "It is now Player " << current->name << "'s turn." << endl;
+            string tile;
+            cin >> tile;
+            validMove = executePlayerMove(stoi(tile));
+            printBoard();
+        } while (!validMove);
         return (checkIfBoardFull() || checkIfWinnerDeclared());
     }
     
